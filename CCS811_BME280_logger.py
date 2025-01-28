@@ -1,7 +1,6 @@
 import smbus2
 import bme280
 import configparser
-from influxdb_interface import influx_writer
 from datetime import datetime
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
