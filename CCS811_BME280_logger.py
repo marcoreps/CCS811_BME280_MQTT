@@ -6,6 +6,7 @@ from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 import time
 import logging
+import qwiic_ccs811
 
 
 
@@ -50,11 +51,20 @@ bus = smbus2.SMBus(port)
 calibration_params = bme280.load_calibration_params(bus, bme280_address)
 
 
+ccs = qwiic_ccs811.QwiicCcs811()
+ccs.begin()
+
+
 while(True):
+    ccs.readAlgorithmResults()
+    writer.write('lab_sensors', 'Ambient_CO2', 'CCS811', ccs.getCO2())
+    writer.write('lab_sensors', 'Ambient_tVOC', 'CCS811', ccs.getTVOC())
+    
+    
     data = bme280.sample(bus, bme280_address, calibration_params)
     writer.write('lab_sensors', 'Ambient_Temp', 'BME280', data.temperature)
     writer.write('lab_sensors', 'Ambient_Pressure', 'BME280', data.pressure)
     writer.write('lab_sensors', 'Ambient_Humidity', 'BME280', data.humidity)
-    time.sleep(1)
+    time.sleep(30)
 
 
