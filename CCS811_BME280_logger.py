@@ -52,6 +52,9 @@ calibration_params = bme280.load_calibration_params(bus, bme280_address)
 
 
 ccs = qwiic_ccs811.QwiicCcs811()
+if ccs.connected == False:
+    print("The Qwiic CCS811 device isn't connected to the system. Please check your connection", \
+        file=sys.stderr)
 ccs.begin()
 
 
