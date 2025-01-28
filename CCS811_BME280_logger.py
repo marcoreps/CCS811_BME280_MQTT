@@ -59,15 +59,14 @@ ccs.begin()
 
 
 while(True):
-    ccs.read_algorithm_results()
-    writer.write('lab_sensors', 'Ambient_CO2', 'CCS811', ccs.getCO2())
-    writer.write('lab_sensors', 'Ambient_tVOC', 'CCS811', ccs.getTVOC())
-    
-    
+
     data = bme280.sample(bus, bme280_address, calibration_params)
     writer.write('lab_sensors', 'Ambient_Temp', 'BME280', data.temperature)
     writer.write('lab_sensors', 'Ambient_Pressure', 'BME280', data.pressure)
     writer.write('lab_sensors', 'Ambient_Humidity', 'BME280', data.humidity)
     time.sleep(30)
 
-
+    ccs.set_environmental_data(data.humidity, data.temperature)
+    ccs.read_algorithm_results()
+    writer.write('lab_sensors', 'Ambient_CO2', 'CCS811', ccs.get_co2())
+    writer.write('lab_sensors', 'Ambient_tVOC', 'CCS811', ccs.get_tvoc())
