@@ -59,7 +59,7 @@ ccs.begin()
 
 
 while(True):
-    ccs.readAlgorithmResults()
+    ccs.read_algorithm_results()
     writer.write('lab_sensors', 'Ambient_CO2', 'CCS811', ccs.getCO2())
     writer.write('lab_sensors', 'Ambient_tVOC', 'CCS811', ccs.getTVOC())
     
