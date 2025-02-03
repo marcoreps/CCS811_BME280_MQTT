@@ -6,7 +6,7 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 import time
 import logging
 from pathlib import Path
-from .tmp117 import Tmp117
+from tmp117 import Tmp117
 
 
 
@@ -47,7 +47,8 @@ def main():
     writer=influx_writer(influx_url, influx_token, influx_org)
 
     i2c_address = 0x4a
-    sensor = tmp117(i2c_address)
+    sensor = Tmp117(i2c_address)
+    sensor.init()
     
     
     while(True):
