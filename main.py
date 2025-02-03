@@ -38,6 +38,8 @@ class influx_writer:
 
 
 def main():
+
+    logging.info("LFG")
     config = configparser.ConfigParser()
     config.read(Path(__file__).with_name('conf.ini'))
     influx_url = config['INFLUX']['url']
@@ -49,12 +51,13 @@ def main():
     i2c_address = 0x4a
     sensor = Tmp117(i2c_address)
     sensor.init()
+    sensor.setConversionMode(0x11)
     sensor.shutdownMode()
     sensor.oneShotMode()
     
     while(True):
         if(sensor.dataReady()):
-            print(sensor.readTempC())
+            logging.info(str(sensor.readTempC()))
             time.sleep(30)
             sensor.oneShotMode()
 
