@@ -38,7 +38,7 @@ class influx_writer:
 
 
 def main():
-
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)-8s %(message)s')
     logging.info("LFG")
     config = configparser.ConfigParser()
     config.read(Path(__file__).with_name('conf.ini'))
