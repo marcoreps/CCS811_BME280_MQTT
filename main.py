@@ -57,9 +57,9 @@ def main():
     
     while(True):
         if(sensor.dataReady()):
-            logging.info(str(sensor.readTempC()))
+            writer.write('lab_sensors', 'Ambient_Temp', 'TMP117_on_calibratorpi', sensor.readTempC())
             time.sleep(30)
-            logging.info("pew pew")
+            logging.debug("Shot fired")
             sensor.oneShotMode()
         time.sleep(1)
 
