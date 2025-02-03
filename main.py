@@ -55,6 +55,8 @@ def main():
     while(True):
         if(sensor.dataReady()):
             print(sensor.readTempC())
+            time.sleep(30)
+            sensor.oneShotMode()
 
 if __name__ == "__main__":
     main()
