@@ -28,7 +28,7 @@ class Tmp117(object):
     
   def __init__(self, address=0x48):
     self.address = address
-    self._i2c = SMBus(1)
+    self._i2c = smbus2.SMBus(1)
 
   def init(self):
     chip_id = self.getDeviceId()
