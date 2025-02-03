@@ -34,24 +34,39 @@ class influx_writer:
         
         
         
-        
-
-config = configparser.ConfigParser()
-config.read(Path(__file__).with_name('conf.ini'))
-influx_url = config['INFLUX']['url']
-influx_token = config['INFLUX']['token']
-influx_org = config['INFLUX']['org']
-
-writer=influx_writer(influx_url, influx_token, influx_org)
-
-i2c_address = 0x4a
-sensor = tmp117(i2c_address)
+    
 
 
+def main():
+    config = configparser.ConfigParser()
+    config.read(Path(__file__).with_name('conf.ini'))
+    influx_url = config['INFLUX']['url']
+    influx_token = config['INFLUX']['token']
+    influx_org = config['INFLUX']['org']
+
+    writer=influx_writer(influx_url, influx_token, influx_org)
+
+    i2c_address = 0x4a
+    sensor = tmp117(i2c_address)
+    
+    
+    while(True):
+        print(sensor.readTempC())
+
+if __name__ == "__main__":
+    main()
 
 
 
 
-while(True):
-    print(sensor.readTempC())
+    
+
+
+
+
+
+
+
+
+
 
