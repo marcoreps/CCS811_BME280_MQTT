@@ -52,7 +52,7 @@ def main():
     sensor = Tmp117(i2c_address)
     sensor.init()
     #sensor.setConversionMode(0x11)
-    sensor.shutdownMode()
+    #sensor.shutdownMode()
     sensor.oneShotMode()
     
     while(True):
