@@ -61,6 +61,7 @@ def main():
             time.sleep(30)
             logging.info("pew pew")
             sensor.oneShotMode()
+        time.sleep(1)
 
 if __name__ == "__main__":
     main()
