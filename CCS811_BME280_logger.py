@@ -37,7 +37,7 @@ class influx_writer:
         
 
 config = configparser.ConfigParser()
-config.read('conf.ini')
+config.read(Path(__file__).with_name('conf.ini'))
 influx_url = config['INFLUX']['url']
 influx_token = config['INFLUX']['token']
 influx_org = config['INFLUX']['org']
