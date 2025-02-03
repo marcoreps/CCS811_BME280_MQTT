@@ -1,4 +1,4 @@
-import smbus2
+import qwiic_i2c
 
 MODE_CONTINUOUS_CONVERSION_MODE = 0b00
 MODE_ONE_SHOT = 0b11
@@ -9,8 +9,19 @@ MODE_AVG_8  = 0b01
 MODE_AVG_32 = 0b10
 MODE_AVG_64 = 0x11
 
+# Knonwn Addresses.
+I2C_ADDRESSES = [0x48, 0x49, 0x4a, 0x4b]
 
 class Tmp117(object):
+  """
+  Interfaces with a Tmp117 over I2C.
+
+  Parameters:
+  address (int): The I2C address to of the device. If None, a default address
+                 of 0x48 is used.
+  i2c_driver: An existing i2c driver object. If None, a driver object is
+              created.
+  """
 
   REG_TEMP_RESULT   = 0X00
   REG_CONFIGURATION = 0x01
@@ -26,11 +37,18 @@ class Tmp117(object):
   DEVICE_ID_VALUE = 0x0117
   TEMP_RESOLUTION = 0.0078125
     
-  def __init__(self, address=0x48):
-    self.address = address
-    self._i2c = smbus2.SMBus(1)
+  def __init__(self, address=None, i2c_driver=None):
+    self.address = I2C_ADDRESSES[0] if address is None else address
+
+    self._i2c = i2c_driver or qwiic_i2c.getI2CDriver()
+    if self._i2c is None:
+      raise RuntimeError("Unable to load I2C driver.")
 
   def init(self):
+    if not qwiic_i2c.isDeviceConnected(self.address):
+      raise RuntimeError(
+          'Device is not connected at address: 0x{:X}'
+          .format(self.address))
     chip_id = self.getDeviceId()
     if chip_id != self.DEVICE_ID_VALUE:
       raise ValueError('Wrong chip id at address: 0x{:X}'.format(chip_id))
@@ -121,3 +139,11 @@ class Tmp117(object):
   def getDeviceId(self):
     return self.readRegister(self.REG_DEVICE_ID)
         
+  # TODO: setHighLimitRegister
+  # TODO: setLowLimitRegister
+  # TODO: unlockEEPROM
+  # TODO: getEEPROMBusy
+  # TODO: setEEPROM1
+  # TODO: setEEPROM2
+  # TODO: setTemperatureOffset
+  # TODO: setEEPROM3
