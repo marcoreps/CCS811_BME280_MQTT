@@ -1,13 +1,6 @@
 import qwiic_i2c
 
-MODE_CONTINUOUS_CONVERSION_MODE = 0b00
-MODE_ONE_SHOT = 0b11
-MODE_SHUTDOWN = 0b01
 
-MODE_AVG_0  = 0b00
-MODE_AVG_8  = 0b01
-MODE_AVG_32 = 0b10
-MODE_AVG_64 = 0x11
 
 # Knonwn Addresses.
 I2C_ADDRESSES = [0x48, 0x49, 0x4a, 0x4b]
@@ -36,6 +29,16 @@ class Tmp117(object):
 
   DEVICE_ID_VALUE = 0x0117
   TEMP_RESOLUTION = 0.0078125
+  
+  
+  MODE_CONTINUOUS_CONVERSION_MODE = 0b00
+  MODE_ONE_SHOT = 0b11
+  MODE_SHUTDOWN = 0b01
+
+  MODE_AVG_0  = 0b00
+  MODE_AVG_8  = 0b01
+  MODE_AVG_32 = 0b10
+  MODE_AVG_64 = 0x11
     
   def __init__(self, address=None, i2c_driver=None):
     self.address = I2C_ADDRESSES[0] if address is None else address
