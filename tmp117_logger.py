@@ -6,7 +6,7 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 import time
 import logging
 from pathlib import Path
-from tmp117 import Tmp117
+from .tmp117 import Tmp117
 
 
 
