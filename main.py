@@ -49,10 +49,12 @@ def main():
     i2c_address = 0x4a
     sensor = Tmp117(i2c_address)
     sensor.init()
-    
+    sensor.setConversionMode(MODE_AVG_8)
+    sensor.oneShotMode()
     
     while(True):
-        print(sensor.readTempC())
+        if(sensor.dataReady()):
+            print(sensor.readTempC())
 
 if __name__ == "__main__":
     main()
