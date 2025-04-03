@@ -53,14 +53,15 @@ def main():
     sensor.init()
     sensor.setConversionMode(0x11)
     #sensor.shutdownMode()
-    #sensor.oneShotMode()
+    sensor.oneShotMode()
     
     while(True):
-        sensor.oneShotMode()
+        logging.info("while")
         if(sensor.dataReady()):
             celsius = sensor.readTempC()
             writer.write('lab_sensors', 'Ambient_Temp', 'TMP117_on_calibratorpi', celsius)
             time.sleep(30)
+            sensor.oneShotMode()
             logging.info("Shot fired, temp="+str(celsius))
         time.sleep(1)
 
