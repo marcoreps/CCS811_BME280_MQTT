@@ -53,14 +53,14 @@ def main():
     sensor.init()
     sensor.setConversionMode(0x11)
     #sensor.shutdownMode()
-    sensor.oneShotMode()
+    #sensor.oneShotMode()
     
     while(True):
+        sensor.oneShotMode()
         if(sensor.dataReady()):
             writer.write('lab_sensors', 'Ambient_Temp', 'TMP117_on_calibratorpi', sensor.readTempC())
             time.sleep(30)
             logging.debug("Shot fired")
-            sensor.oneShotMode()
         time.sleep(1)
 
 if __name__ == "__main__":
