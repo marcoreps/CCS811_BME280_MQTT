@@ -58,9 +58,10 @@ def main():
     while(True):
         sensor.oneShotMode()
         if(sensor.dataReady()):
-            writer.write('lab_sensors', 'Ambient_Temp', 'TMP117_on_calibratorpi', sensor.readTempC())
+            celsius = sensor.readTempC()
+            writer.write('lab_sensors', 'Ambient_Temp', 'TMP117_on_calibratorpi', celsius)
             time.sleep(30)
-            logging.debug("Shot fired")
+            logging.info("Shot fired, temp="+str(celsius))
         time.sleep(1)
 
 if __name__ == "__main__":
