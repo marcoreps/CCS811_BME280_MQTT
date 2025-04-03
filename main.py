@@ -52,15 +52,14 @@ def main():
     sensor = Tmp117(i2c_address)
     sensor.init()
     sensor.setConversionMode(0x11)
-    #sensor.shutdownMode()
     sensor.oneShotMode()
     
     while(True):
-        logging.info("while")
+        logging.debug("while")
         if(sensor.dataReady()):
             celsius = sensor.readTempC()
             writer.write('lab_sensors', 'Ambient_Temp', 'TMP117_on_calibratorpi', celsius)
-            logging.info("Shot fired, temp="+str(celsius))
+            logging.debug("Shot fired, temp="+str(celsius))
             time.sleep(30)
             sensor.oneShotMode()
 
