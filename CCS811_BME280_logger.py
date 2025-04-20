@@ -34,9 +34,9 @@ class influx_writer:
             pass
         logging.debug('point written, writer done')
         
-        
-        
-        
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)-8s %(message)s')
+logging.info("Starting ...")
+
 
 config = configparser.ConfigParser()
 config.read(Path(__file__).with_name('conf.ini'))
@@ -51,7 +51,6 @@ bme280_address = 0x77
 bus = smbus2.SMBus(port)
 
 calibration_params = bme280.load_calibration_params(bus, bme280_address)
-
 
 
 
