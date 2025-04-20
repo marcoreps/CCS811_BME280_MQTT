@@ -7,6 +7,7 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 import time
 import logging
 import qwiic_ccs811
+from tmp117 import Tmp117
 from pathlib import Path
 
 
