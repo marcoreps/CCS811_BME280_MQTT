@@ -52,6 +52,8 @@ bus = smbus2.SMBus(port)
 calibration_params = bme280.load_calibration_params(bus, bme280_address)
 
 
+
+
 ccs = qwiic_ccs811.QwiicCcs811()
 if ccs.connected == False:
     print("The Qwiic CCS811 device isn't connected to the system. Please check your connection", \
@@ -59,15 +61,30 @@ if ccs.connected == False:
 ccs.begin()
 
 
+i2c_address = 0x4a
+tmp = Tmp117(i2c_address)
+tmp.init()
+tmp.setConversionMode(0x11)
+tmp.oneShotMode()
+
+
+
 while(True):
+
+    while not tmp.dataReady():
+        time.sleep(1)
+    celsius = tmp.readTempC()
+    writer.write('lab_sensors', 'Ambient_Temp', 'TMP117_on_gpibpi', celsius)
 
     data = bme280.sample(bus, bme280_address, calibration_params)
     writer.write('lab_sensors', 'Ambient_Temp', 'BME280', data.temperature)
     writer.write('lab_sensors', 'Ambient_Pressure', 'BME280', data.pressure)
     writer.write('lab_sensors', 'Ambient_Humidity', 'BME280', data.humidity)
-    time.sleep(30)
 
     ccs.set_environmental_data(data.humidity, data.temperature)
     ccs.read_algorithm_results()
     writer.write('lab_sensors', 'Ambient_CO2', 'CCS811', ccs.get_co2())
     writer.write('lab_sensors', 'Ambient_tVOC', 'CCS811', ccs.get_tvoc())
+    
+    time.sleep(30)
+    tmp.oneShotMode()
