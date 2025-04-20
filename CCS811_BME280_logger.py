@@ -34,7 +34,7 @@ class influx_writer:
             pass
         logging.debug('point written, writer done')
         
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)-8s %(message)s')
+logging.basicConfig(level=logging.info, format='%(asctime)s %(levelname)-8s %(message)s')
 logging.info("Starting ...")
 
 
