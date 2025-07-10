@@ -86,38 +86,36 @@ except serial.SerialException as e:
     
     
 def read_serial_tmp119_temp():
+    
     if ser is None or not ser.is_open:
         logging.error("Serial port is not open for reading Arduino TMP117 data.")
-        return None
+        return
 
     try:
-        line_bytes = ser.readline()
-        if not line_bytes:
-            logging.warning("Serial read timed out, no data received from Arduino.")
-            return None
+        while ser.in_waiting > 0:
+            line_bytes = ser.readline()
+            if not line_bytes:
+                logging.debug("Serial readline timed out while draining buffer.")
+                continue
 
-        line = line_bytes.decode('utf-8').strip()
-        logging.debug(f"Raw serial line received from Arduino: '{line}'")
+            line = line_bytes.decode('utf-8').strip()
+            logging.debug(f"Raw serial line received from Arduino (buffered): '{line}'")
 
-        # Expected format from Arduino Serial Plotter: "Temperature:XX.XXXX"
-        if line.startswith("Temperature:"):
-            try:
-                temp_str = line.split(':')[1]
-                temperature = float(temp_str)
-                return temperature
-            except (ValueError, IndexError) as e:
-                logging.warning(f"Failed to parse temperature from line '{line}': {e}")
-                return None
-        elif line: # If it's not a temperature line but not empty, log it for debugging
-            logging.debug(f"Non-temperature line received from Arduino: '{line}'")
-        return None # No valid temperature line received or parsed
+            if line.startswith("Temperature:"):
+                try:
+                    # Extract the numerical part after "Temperature:"
+                    temp_str = line.split(':')[1]
+                    temperature = float(temp_str)
+                    return temperature
+                except (ValueError, IndexError) as e:
+                    logging.warning(f"Failed to parse temperature from line '{line}': {e}")
+            elif line: 
+                logging.debug(f"Non-temperature line received from Arduino (buffered): '{line}'")
 
     except serial.SerialTimeoutException:
-        logging.warning("Serial read timed out.")
-        return None
+        logging.warning("Serial read timed out while buffering.")
     except Exception as e:
-        logging.error(f"Error reading from serial port: {e}")
-        return None
+        logging.error(f"Error reading from serial port for buffering: {e}")
 
 
 
