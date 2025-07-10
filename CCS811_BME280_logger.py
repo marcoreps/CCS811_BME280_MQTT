@@ -9,6 +9,11 @@ import logging
 import qwiic_ccs811
 from tmp117 import Tmp117
 from pathlib import Path
+import serial
+
+SERIAL_PORT = '/dev/ttyACM1'
+SERIAL_BAUD_RATE = 115200
+
 
 
 
@@ -69,12 +74,69 @@ tmp.oneShotMode()
 
 
 
+ser = None
+try:
+    # Open the serial port with a timeout for readline()
+    ser = serial.Serial(SERIAL_PORT, SERIAL_BAUD_RATE, timeout=10) 
+    logging.info(f"Successfully opened serial port {SERIAL_PORT} at {SERIAL_BAUD_RATE} baud.")
+    ser.flushInput()
+    logging.info("Serial input buffer flushed.")
+except serial.SerialException as e:
+    logging.error(f"Could not open serial port {SERIAL_PORT}: {e}")
+    
+    
+def read_serial_tmp119_temp():
+    if ser is None or not ser.is_open:
+        logging.error("Serial port is not open for reading Arduino TMP117 data.")
+        return None
+
+    try:
+        line_bytes = ser.readline()
+        if not line_bytes:
+            logging.warning("Serial read timed out, no data received from Arduino.")
+            return None
+
+        line = line_bytes.decode('utf-8').strip()
+        logging.debug(f"Raw serial line received from Arduino: '{line}'")
+
+        # Expected format from Arduino Serial Plotter: "Temperature:XX.XXXX"
+        if line.startswith("Temperature:"):
+            try:
+                temp_str = line.split(':')[1]
+                temperature = float(temp_str)
+                return temperature
+            except (ValueError, IndexError) as e:
+                logging.warning(f"Failed to parse temperature from line '{line}': {e}")
+                return None
+        elif line: # If it's not a temperature line but not empty, log it for debugging
+            logging.debug(f"Non-temperature line received from Arduino: '{line}'")
+        return None # No valid temperature line received or parsed
+
+    except serial.SerialTimeoutException:
+        logging.warning("Serial read timed out.")
+        return None
+    except Exception as e:
+        logging.error(f"Error reading from serial port: {e}")
+        return None
+
+
+
 while(True):
 
     while not tmp.dataReady():
         time.sleep(1)
     celsius = tmp.readTempC()
     writer.write('lab_sensors', 'Ambient_Temp', 'TMP117_on_gpibpi', celsius)
+    
+    
+    serial_celsius = read_serial_tmp119_temp()
+    if serial_celsius is not None:
+        writer.write('lab_sensors', 'Ambient_Temp', 'TMP119_on_MG24', serial_celsius)
+        logging.info(f"MG24 TMP119 Temp: {serial_celsius:.4f} °C")
+    else:
+        logging.warning("No valid TMP119 reading received from MG24 via serial in this cycle.")
+    
+    
 
     data = bme280.sample(bus, bme280_address, calibration_params)
     writer.write('lab_sensors', 'Ambient_Temp', 'BME280', data.temperature)
